@@ -44,7 +44,6 @@ jobs:
 
           # Define a variable
           count=0
-          res = ""
 
           while [ $count -lt 20 ]; do
             echo "Count is $count"
@@ -53,10 +52,8 @@ jobs:
             count=$((count + 1))
 
             # Check if all required status checks have passed
-            res = $(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            echo $(curl -s -H "Authorization: token $GITHUB_TOKEN" \
               "https://api.github.com/repos/${OWNER}/${REPO}/commits/${{ github.sha }}/status")
-
-            echo "$res"
 
             STATUS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
               "https://api.github.com/repos/${OWNER}/${REPO}/commits/${{ github.sha }}/status" \
