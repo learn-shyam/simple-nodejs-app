@@ -52,6 +52,11 @@ jobs:
             count=$((count + 1))
 
             # Check if all required status checks have passed
+            API_RES = $(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${OWNER}/${REPO}/commits/${{ github.sha }}/status"
+
+            echo "$API_RES"
+
             STATUS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
               "https://api.github.com/repos/${OWNER}/${REPO}/commits/${{ github.sha }}/status" \
               | jq -r '.state')
@@ -75,4 +80,6 @@ jobs:
               sleep 10
             fi
           done
+          # return error when merge not happened
+          exit 1
 
