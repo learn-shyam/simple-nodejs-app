@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # Check for updates in the `package.json` and `package-lock.json` files
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: '19:36'
+      timezone: America/Los_Angeles
+    open-pull-requests-limit: 10
+    target-branch: "master"
+    labels:
+      - "dependencies"
+      - "dependabot"
+    ignore:
+    - dependency-name: express
