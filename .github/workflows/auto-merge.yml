@@ -56,6 +56,8 @@ jobs:
               "https://api.github.com/repos/${OWNER}/${REPO}/commits/${{ github.sha }}/status" \
               | jq -r '.state')
 
+            echo "status: $STATUS"
+
             if [ "$STATUS" = "success" ]; then
               echo "All checks passed. Merging PR #${PR_NUMBER}"
 
