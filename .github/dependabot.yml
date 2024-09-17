@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # Check for updates in the `package.json` and `package-lock.json` files
+  # Check for updates in the `package.json` and `package-lock.json` files. trying retrigger.
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
