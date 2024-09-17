@@ -17,22 +17,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Wait for status check
-        id: outcome
-        uses: omkarkhatavkar/wait-for-status-checks@main
-        with:
-          ref: ${{ github.head_ref }}
-          context: 'continuous-integration/travis-ci/push'
-          wait-interval: 60
-          count: 10
-      - name: Check status
+      - name: Wait for status checks to complete
+        id: wait_for_status
         run: |
-          if [ ${{ steps.outcome.outputs.result }} == 'success' ]; then
-            echo "Status check passed!"
-          else
-            echo "Status check failed!"
-            exit 1
-          fi
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          CHECK_NAME="ci/circleci: build"  # The name of the status check you are waiting for
+          SHA="${{ github.event.pull_request.head.sha }}"
+
+          echo "Waiting for status check '$CHECK_NAME' on commit $SHA"
+
+          # Loop until the status check passes or fails
+          REP = 0
+          while true; do
+            REP = REP + 1
+            status=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${{ github.repository }}/commits/$SHA/status" | jq -r ".statuses[] | select(.context == \"$CHECK_NAME\") | .state")
+
+            echo "Current status: $status"
+
+            if [[ "$status" == "success" ]]; then
+              echo "Status check passed!"
+              break
+            elif [[ "$status" == "failure" ]]; then
+              echo "Status check failed!"
+              exit 1
+            else
+              echo "Status check still pending..."
+              sleep 100
+            fi
+            exit 2 if REP == 20
+          done
 
 
   auto-merge:
