@@ -12,9 +12,33 @@ permissions:
   pull-requests: write
 
 jobs:
+  status-check:
+    if: contains(github.event.pull_request.labels.*.name, 'dependencies')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Wait for status check
+        id: outcome
+        uses: omkarkhatavkar/wait-for-status-checks@main
+        with:
+          ref: ${{ github.head_ref }}
+          context: 'continuous-integration/travis-ci/push'
+          wait-interval: 60
+          count: 10
+      - name: Check status
+        run: |
+          if [ ${{ steps.outcome.outputs.result }} == 'success' ]; then
+            echo "Status check passed!"
+          else
+            echo "Status check failed!"
+            exit 1
+          fi
+
+
   auto-merge:
     if: contains(github.event.pull_request.labels.*.name, 'dependencies')
     runs-on: ubuntu-latest
+    needs: status-check
 
     steps:
       - name: Checkout repository
@@ -39,4 +63,3 @@ jobs:
         uses: pascalgn/automerge-action@v0.15.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
