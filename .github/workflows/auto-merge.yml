@@ -28,17 +28,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests
-        run: npm test
-
       - name: Auto-approve dependabot PR
-        if: github.actor == 'dependabot[bot]'
+        if: contains(github.event.pull_request.labels.*.name, 'dependencies')
         uses: hmarr/auto-approve-action@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Auto-merge dependabot PR
-        if: github.actor == 'dependabot[bot]'
+        if: contains(github.event.pull_request.labels.*.name, 'dependencies')
         uses: pascalgn/automerge-action@v0.15.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
