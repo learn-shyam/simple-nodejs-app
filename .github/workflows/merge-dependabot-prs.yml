@@ -30,7 +30,7 @@ jobs:
         dependabot_prs=$(echo "$response" | jq -r '.[] | select(.user.login == "dependabot[bot]") | .number')
 
         # Output the PR numbers
-        echo "::set-output name=dependabot_prs::$dependabot_prs"
+        echo "{dependabot_prs}={$dependabot_prs}" >> $GITHUB_OUTPUT
 
     - name: Check Mergeability of Dependabot PRs
       id: check-mergeable
@@ -56,7 +56,7 @@ jobs:
         done
 
         # Output the mergeable PRs
-        echo "::set-output name=mergeable_prs::$mergeable_prs"
+        echo "{mergeable_prs}={$mergeable_prs}" >> $GITHUB_OUTPUT
 
     - name: Merge Mergeable Dependabot PRs
       if: ${{ steps.check-mergeable.outputs.mergeable_prs != '' }}
