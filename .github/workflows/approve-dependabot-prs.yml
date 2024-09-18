@@ -1,0 +1,44 @@
+name: Approve Dependabot PRs
+
+on:
+  schedule:
+    # Runs the workflow every day at midnight (adjust cron as needed)
+    - cron: "0 0 * * *"
+  workflow_dispatch: # Allows manual triggering of the action
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  approve-dependabot-prs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Fetch Open PRs from Dependabot
+      id: fetch-dependabot-prs
+      run: |
+        # Fetch open PRs created by Dependabot using GitHub API
+        response=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+        -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+        https://api.github.com/repos/${{ github.repository }}/pulls?state=open)
+
+        # Filter Dependabot PRs
+        dependabot_prs=$(echo "$response" | jq '.[] | select(.user.login == "dependabot[bot]") | .number')
+
+        echo "::set-output name=dependabot_prs::$dependabot_prs"
+
+    - name: Approve Dependabot PRs
+      if: ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs != '' }}
+      run: |
+        for pr in ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs }}; do
+          echo "Approving PR #$pr"
+          curl -s -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{"event":"APPROVE"}' \
+            https://api.github.com/repos/${{ github.repository }}/pulls/$pr/reviews
+        done
