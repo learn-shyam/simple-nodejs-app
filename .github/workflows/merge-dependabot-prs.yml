@@ -28,7 +28,7 @@ jobs:
         echo "::set-output name=dependabot_prs::$dependabot_prs"
 
     - name: Approve Dependabot PRs
-      if: steps.fetch-dependabot-prs.outputs.dependabot_prs != ""
+      if: ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs != '' }}
       run: |
         for pr in ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs }}; do
           echo "Approving PR #$pr"
