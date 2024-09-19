@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   fetch-and-merge-dependabot-prs:
@@ -27,7 +26,7 @@ jobs:
         https://api.github.com/repos/${{ github.repository }}/pulls?state=open)
 
         # Filter only Dependabot PRs
-        dependabot_prs=$(echo "$response" | jq -r '.[] | select(.user.login == "dependabot[bot]") | .number')
+        dependabot_prs=$(echo "$response" | jq -r '.[] | select(.user.login == "stadori") | .number')
 
         # Output the PR numbers
         echo "::set-output name=dependabot_prs::$dependabot_prs"
