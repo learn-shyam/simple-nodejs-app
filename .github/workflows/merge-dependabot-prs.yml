@@ -7,7 +7,7 @@ on:
   workflow_dispatch: # Allows manual triggering of the action
 
 permissions:
-  pull-requests: write
+  contents: write
 
 jobs:
   fetch-and-merge-dependabot-prs:
