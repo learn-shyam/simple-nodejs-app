@@ -31,6 +31,8 @@ jobs:
         # Filter Dependabot PRs
         dependabot_prs=$(echo "$response" | jq '.[] | select(.user.login == "stadori") | .number')
 
+        echo $dependabot_prs
+
         echo "{dependabot_prs}={$dependabot_prs}" >> $GITHUB_OUTPUT
 
     - name: Approve Dependabot PRs
