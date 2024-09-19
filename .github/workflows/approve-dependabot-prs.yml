@@ -6,9 +6,9 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch: # Allows manual triggering of the action
 
-permissions:
-  contents: write
-  pull-requests: write
+# permissions:
+#   contents: write
+#   pull-requests: write
 
 jobs:
   approve-dependabot-prs:
@@ -30,7 +30,6 @@ jobs:
         dependabot_prs=$(echo "$response" | jq '.[] | select(.user.login == "stadori") | .number')
 
         echo "::set-output name=dependabot_prs::$dependabot_prs"
-        # echo "{dependabot_prs}={$dependabot_prs}" >> $GITHUB_OUTPUT
 
     - name: Approve Dependabot PRs
       if: ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs != '' }}
