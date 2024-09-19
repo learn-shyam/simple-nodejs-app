@@ -36,8 +36,9 @@ jobs:
         echo "{dependabot_prs}={$dependabot_prs}" >> $GITHUB_OUTPUT
 
     - name: Approve Dependabot PRs
-      if: ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs != '' }}
+      # if: ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs != '' }}
       run: |
+        echo {steps.fetch-dependabot-prs.outputs.dependabot_prs}
         for pr in ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs }}; do
           echo "Approving PR #$pr"
           curl -s -X POST \
