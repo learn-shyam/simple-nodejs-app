@@ -2,7 +2,7 @@ name: Approve Dependabot PRs
 
 on:
   schedule:
-    # Runs the workflow every day at midnight (adjust cron as needed). test
+    # Runs the workflow every day at midnight (adjust cron as needed)
     - cron: "0 0 * * *"
   workflow_dispatch: # Allows manual triggering of the action
 
@@ -26,19 +26,15 @@ jobs:
         -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
         https://api.github.com/repos/${{ github.repository }}/pulls?state=open)
 
-        echo $response
-
         # Filter Dependabot PRs
         dependabot_prs=$(echo "$response" | jq '.[] | select(.user.login == "stadori") | .number')
 
-        echo $dependabot_prs
-
-        echo "{dependabot_prs}={$dependabot_prs}" >> $GITHUB_OUTPUT
+        echo "::set-output name=dependabot_prs::$dependabot_prs"
+        # echo "{dependabot_prs}={$dependabot_prs}" >> $GITHUB_OUTPUT
 
     - name: Approve Dependabot PRs
       if: ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs != '' }}
       run: |
-        echo "${{ steps.fetch-dependabot-prs.outputs.dependabot_prs }}"
         for pr in ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs }}; do
           echo "Approving PR #$pr"
           curl -s -X POST \
