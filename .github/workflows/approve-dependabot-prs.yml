@@ -38,7 +38,7 @@ jobs:
     - name: Approve Dependabot PRs
       # if: ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs != '' }}
       run: |
-        echo {steps.fetch-dependabot-prs.outputs.dependabot_prs}
+        echo "${{ steps.fetch-dependabot-prs.outputs.dependabot_prs }}"
         for pr in ${{ steps.fetch-dependabot-prs.outputs.dependabot_prs }}; do
           echo "Approving PR #$pr"
           curl -s -X POST \
