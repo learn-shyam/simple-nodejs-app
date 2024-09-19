@@ -1,14 +1,17 @@
 version: 2
 updates:
-  # Check for updates in the `package.json` and `package-lock.json` files. trying retrigger.
+  # Check for updates in the `package.json` and `package-lock.json` files.
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
-      time: '19:36'
+      interval: daily
+      time: '08:00'
       timezone: America/Los_Angeles
+    commit-message:
+      prefix: "deps"
     open-pull-requests-limit: 10
     target-branch: "master"
+    rebase-strategy: "auto" # Automatically rebase PRs if there's a conflict
     labels:
       - "dependencies"
       - "dependabot"
